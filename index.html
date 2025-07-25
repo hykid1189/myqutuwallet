@@ -387,30 +387,31 @@
 
     // QR 코드 생성 함수
     function generateQRCode() {
-      // fromAddress에 입력된 값 가져오기 & 공백 제거
       const address = document.getElementById("fromAddress").value.trim();
-      // 이더리움 주소 형식이 아닐 경우 오류 출력 & 종료
-      if (!web3.utils.isAddress(address)) {
-        document.getElementById("message").value += "❗ 유효한 이더리움 주소가 아닙니다.\n";
+      const messageBox = document.getElementById("message");
+
+      // 주소 유효성 검사: ethers.js 사용
+      if (typeof web3 === "undefined" || !web3.utils.isAddress(address)) {
+        messageBox.value += "❗ 유효한 이더리움 주소가 아닙니다.\n";
         return;
       }
 
-      // QR코드 표시할 영역 초기화
+      // QR 영역 초기화
       const qrDiv = document.getElementById("qrcode");
       qrDiv.innerHTML = "";
 
-      // 주소를 기반으로 QR 코드 생성
-      QRCode.toCanvas(address, { width: 400 }, function (error, canvas) {
+      // QR코드 생성
+      qrcode.toCanvas(address, { width: 400 }, function (error, canvas) {
         if (error) {
-          document.getElementById("message").value += "❌ QR 코드 생성 실패\n";
-        } else {
-          qrDiv.appendChild(canvas);
-          document.getElementById("qrModal").style.display = "flex";
-        }
+            messageBox.value += "❌ QR 코드 생성 실패\n";
+          } else {
+            qrDiv.appendChild(canvas);
+            document.getElementById("qrModal").style.display = "flex";
+          }
       });
     }
 
-    // QR 코드 창 닫기
+    // QR 창 닫기
     function closeQR() {
       document.getElementById("qrModal").style.display = "none";
     }
